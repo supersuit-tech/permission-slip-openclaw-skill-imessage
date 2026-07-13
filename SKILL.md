@@ -27,12 +27,18 @@ Do **not** call a bare `permission-slip` binary — it is not guaranteed to be o
 `PATH`, and assuming a path like `~/.openclaw/.../bin/permission-slip` will fail
 with "Command not found". `npx @permission-slip/cli@latest` always resolves the
 CLI (downloading/caching it on first use). Every command below — `whoami`,
-`connectors`, `request`, `request-status` — must use this `npx` form.
+`connectors`, `request`, `status` — must use this `npx` form.
 
 ## Defaults
 
-- **"Check my messages" → list recent conversations.**
-  Run `list_chats` with `{"limit": 20}`, then offer to open one.
+- **"Check my messages" → default to last 20 chats with unread first.**
+  Run `list_chats` with:
+  ```json
+  {"unread_only": true, "order_by": "last_activity", "sort": "desc", "limit": 20}
+  ```
+  ⚠️ Do NOT use constraint operators like `$lte` — plain integers only for `limit`.
+  ⚠️ If `unread_only` returns empty (older imsg builds that don't report
+  `unread_count`), retry once without it before concluding there are no messages.
 - **Account selection:** omit `--instance`. Permission Slip auto-selects the
   user's *default* iMessage instance. Only pass `--instance` if the user
   explicitly names a second account.
@@ -53,7 +59,7 @@ CLI (downloading/caching it on first use). Every command below — `whoami`,
 
 | User says | Action | Params |
 |-----------|--------|--------|
-| "check my messages", "any new texts?" | `imessage.list_chats` | `{"limit": 20}` |
+| "check my messages", "any new texts?" | `imessage.list_chats` | `{"unread_only": true, "order_by": "last_activity", "sort": "desc", "limit": 20}` |
 | "open the chat with Sarah", "who's in that group?" | `imessage.get_chat` | `{"chat_id": <id>}` |
 | "what did Sarah say?", "read that thread" | `imessage.read_history` | `{"chat_id": <id>, "limit": 50}` |
 | "anything new since I last checked?" | `imessage.read_history` | `{"chat_id": <id>, "since_guid": <last guid>}` |
@@ -72,7 +78,7 @@ For existing conversations — and always for group chats — prefer
 ```bash
 npx @permission-slip/cli@latest request \
   --action imessage.list_chats \
-  --params '{"limit": 20}'
+  --params '{"unread_only": true, "order_by": "last_activity", "sort": "desc", "limit": 20}'
 ```
 
 The CLI prints JSON. Two outcomes:
@@ -85,7 +91,7 @@ The CLI prints JSON. Two outcomes:
 - **Pending approval (send):** the CLI returns a request id in a `pending`
   state. Tell the user plainly: *"That needs your approval — I've sent the
   request to Permission Slip; I'll know once you approve it."* Then poll with
-  `npx @permission-slip/cli@latest request-status <id>` and report the outcome.
+  `npx @permission-slip/cli@latest status <approval_id>` and report the outcome.
   Never claim a message was sent until the status is approved **and** executed
   — the connector verifies actual delivery and reports relay failures, so an
   executed result means it really went out.
