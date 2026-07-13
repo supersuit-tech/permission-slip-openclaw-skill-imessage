@@ -169,20 +169,6 @@ instead of dumping every message.
 - If a preflight check (`whoami`/`connectors`) fails, tell the user what's
   wrong and the fix — don't paste the raw "Command not found" / JSON output.
 
-## Standing Approvals
-
-### Live (auto-approved reads — no per-request approval needed)
-- `imessage.list_chats` with `{"unread_only": false, "limit": 100}` ✅
-- `imessage.read_history` with `limit: 50` ✅
-- `imessage.search` with `limit: 50` ✅
-
-### Awaiting approval
-- `imessage.list_chats` with `{"unread_only": true, "order_by": "last_activity", "sort": "desc", "limit": 20}` — pending at https://permission-slip.tailde7fe4.ts.net/approvals
-
-Once approved, move this entry up to **Live**.
-
-Sending always requires approval.
-
 ## Constraints
 
 - Max `limit` is 100 for `list_chats` and 200 for `read_history` / `search` —
