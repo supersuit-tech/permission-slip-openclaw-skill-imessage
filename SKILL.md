@@ -1,6 +1,6 @@
 ---
-name: "permission-slip-openclaw-skill-imessage"
-description: "List, read, search, and send iMessage/SMS via Messages.app connected to Permission Slip."
+name: permission-slip-openclaw-skill-imessage
+description: List, read, search, and send iMessage / SMS conversations through a Messages.app account connected to Permission Slip. Use when the user says things like "check my messages", "any new texts?", "what did Sarah say?", "search my messages for X", "text Mom I'm on my way", or "reply to that thread" and their iMessage account is managed via Permission Slip.
 ---
 
 # iMessage (via Permission Slip)
@@ -172,13 +172,14 @@ instead of dumping every message.
 ## Standing Approvals
 
 ### Live (auto-approved reads — no per-request approval needed)
-- `imessage.list_chats` with `{"unread_only": true, "order_by": "last_activity", "sort": "desc", "limit": 20}` ✅
-- `imessage.list_chats` with `unread_only: false, limit: 100` ✅
+- `imessage.list_chats` with `{"unread_only": false, "limit": 100}` ✅
 - `imessage.read_history` with `limit: 50` ✅
 - `imessage.search` with `limit: 50` ✅
 
 ### Awaiting approval
-- New: `imessage.list_chats` with `{"unread_only": true, "order_by": "last_activity", "sort": "desc", "limit": 20}` — pending at https://permission-slip.tailde7fe4.ts.net/approvals
+- `imessage.list_chats` with `{"unread_only": true, "order_by": "last_activity", "sort": "desc", "limit": 20}` — pending at https://permission-slip.tailde7fe4.ts.net/approvals
+
+Once approved, move this entry up to **Live**.
 
 Sending always requires approval.
 
